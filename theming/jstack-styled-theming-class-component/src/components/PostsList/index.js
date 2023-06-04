@@ -20,17 +20,3 @@ export default class PostsList extends React.Component {
     );
   }  
 }
-
-/* export default function PostsList() {
-  return (
-    <Container>
-      {posts.map((post) => (
-        <Post
-          key={post.id}
-          title={post.title}
-          description={post.description}
-        />
-      ))}
-    </Container>
-  );
-} */

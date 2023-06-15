@@ -6,5 +6,6 @@ export default {
   textColor: '#fff',
   headerBackgroundColor: '#111',
   footerBackgroundColor: '#111',
+  navBackgroundColor: '#111',
   postBackgroundColor: '#333',
 };

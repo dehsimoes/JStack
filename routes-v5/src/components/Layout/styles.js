@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Nav = styled.nav`
-    background-color: #000;
+    background: ${({ theme }) => theme.navBackgroundColor};
     margin-top: 16px;
     padding: 16px;
     border-radius: 4px;

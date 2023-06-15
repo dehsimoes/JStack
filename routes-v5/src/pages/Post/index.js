@@ -33,7 +33,7 @@ export default class Post extends React.Component {
 
         return (
             <>
-                <button onClick={this.handleNavigate}>Voltar para a lista de posts</button> 
+                {/* <button onClick={this.handleNavigate}>Voltar para a lista de posts</button>  */}
                 <h1>Post page</h1>
             </>
         );

@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Link } from 'react-router-dom';
 
 import Header from '../Header';
-import Footer from '../Footer';
 
 import Routes from '../../Routes';
 
@@ -24,10 +23,10 @@ export default function Layout({
       </Nav>
 
       <Routes />
-      <Footer 
+   {/*    <Footer 
         onToggleTheme={onToggleTheme}
         selectedTheme={selectedTheme} 
-      />
+      /> */}
     </BrowserRouter>
   );
 }

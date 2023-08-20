@@ -56,3 +56,16 @@ export default function Home() {
     </Container>
   );
 }
+
+fetch('http://localhost:3001/contacts', {
+  method: 'DELETE',
+  headers: new Headers({
+    'X-App-ID': '123',
+  }),
+})
+  .then((response) => {
+    console.log('response', response);
+  })
+  .catch((error) => {
+    console.log('erro', error);
+  });

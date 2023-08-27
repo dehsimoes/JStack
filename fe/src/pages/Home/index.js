@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import { useEffect, useState } from 'react';
 import {
   Container, InputSearchContainer, Header, ListContainer, Card,
 } from './styles';
@@ -11,6 +12,24 @@ import trash from '../../assets/images/icons/trash.svg';
 import Loader from '../../components/Loader'; */
 
 export default function Home() {
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/contacts', {
+      method: 'GET',
+      headers: new Headers({
+        'X-App-ID': '123',
+      }),
+    })
+      .then(async (response) => {
+        const json = await response.json();
+        setContacts(json);
+      })
+      .catch((error) => {
+        console.log('erro', error);
+      });
+  }, []);
+
   return (
     <Container>
       {/* <Loader />
@@ -21,7 +40,10 @@ export default function Home() {
       </InputSearchContainer>
 
       <Header>
-        <strong>3 contatos</strong>
+        <strong>
+          {contacts.length}
+          {contacts.length === 1 ? ' contato' : ' contatos'}
+        </strong>
         <Link to="/new">Novo Contato</Link>
       </Header>
 
@@ -33,43 +55,30 @@ export default function Home() {
           </button>
         </header>
 
-        <Card>
-          <div className="info">
-            <div className="contact-name">
-              <strong>André Silva</strong>
-              <small>instagram</small>
+        {contacts.map((contact) => (
+          <Card key={contact.id}>
+            <div className="info">
+              <div className="contact-name">
+                <strong>{contact.name}</strong>
+                {contact.category_name && (
+                <small>{contact.category_name}</small>
+                )}
+              </div>
+              <span>{contact.email}</span>
+              <span>{contact.phone}</span>
             </div>
-            <span>as.silva@gmail.com</span>
-            <span>(43) 99667-7177</span>
-          </div>
 
-          <div className="actions">
-            <Link to="/edit/123">
-              <img src={edit} alt="" />
-            </Link>
-            <button type="button">
-              <img src={trash} alt="" />
-            </button>
-          </div>
-        </Card>
+            <div className="actions">
+              <Link to={`/edit/${contact.id}`}>
+                <img src={edit} alt="" />
+              </Link>
+              <button type="button">
+                <img src={trash} alt="" />
+              </button>
+            </div>
+          </Card>
+        ))}
       </ListContainer>
     </Container>
   );
 }
-
-fetch('http://localhost:3001/contacts', {
-  method: 'GET',
-  headers: new Headers({
-    'X-App-ID': '123',
-  }),
-})
-  .then(async (response) => {
-    const json = await response.json();
-    console.log('response', response);
-    json.forEach((contact) => {
-      console.log(contact.name);
-    });
-  })
-  .catch((error) => {
-    console.log('erro', error);
-  });

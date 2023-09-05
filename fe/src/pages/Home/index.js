@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
-  Container, InputSearchContainer, Header, ListContainer, Card,
+  Container, InputSearchContainer, Header, ListHeader, Card,
 } from './styles';
 
 import arrow from '../../assets/images/icons/arrow.svg';
@@ -13,14 +13,15 @@ import Loader from '../../components/Loader'; */
 
 export default function Home() {
   const [contacts, setContacts] = useState([]);
+  const [orderBy, setOrderBy] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredContacts = useMemo(() => contacts.filter((contact) => (
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )), [contacts, searchTerm]);
 
   useEffect(() => {
-    fetch('http://localhost:3001/contacts', {
-      method: 'GET',
-      headers: new Headers({
-        'X-App-ID': '123',
-      }),
-    })
+    fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`)
       .then(async (response) => {
         const json = await response.json();
         setContacts(json);
@@ -28,7 +29,17 @@ export default function Home() {
       .catch((error) => {
         console.log('erro', error);
       });
-  }, []);
+  }, [orderBy]);
+
+  function handleToggleOrderBy() {
+    setOrderBy(
+      (prevState) => (prevState === 'asc' ? 'desc' : 'asc'),
+    );
+  }
+
+  function handleChangeSearchTerm(event) {
+    setSearchTerm(event.target.value);
+  }
 
   return (
     <Container>
@@ -36,49 +47,54 @@ export default function Home() {
        <Modal danger /> */}
 
       <InputSearchContainer>
-        <input type="text" placeholder="Pesquise pelo nome..." />
+        <input
+          value={searchTerm}
+          type="text"
+          placeholder="Pesquise pelo nome..."
+          onChange={handleChangeSearchTerm}
+        />
       </InputSearchContainer>
 
       <Header>
         <strong>
-          {contacts.length}
-          {contacts.length === 1 ? ' contato' : ' contatos'}
+          {filteredContacts.length}
+          {filteredContacts.length === 1 ? ' contato' : ' contatos'}
         </strong>
         <Link to="/new">Novo Contato</Link>
       </Header>
 
-      <ListContainer>
-        <header>
-          <button type="button" className="sort-button">
+      {filteredContacts.length > 0 && (
+        <ListHeader orderBy={orderBy}>
+          <button type="button" onClick={handleToggleOrderBy}>
             <span>Nome</span>
             <img src={arrow} alt="Arrow" />
           </button>
-        </header>
+        </ListHeader>
+      )}
 
-        {contacts.map((contact) => (
-          <Card key={contact.id}>
-            <div className="info">
-              <div className="contact-name">
-                <strong>{contact.name}</strong>
-                {contact.category_name && (
+      {filteredContacts.map((contact) => (
+        <Card key={contact.id}>
+          <div className="info">
+            <div className="contact-name">
+              <strong>{contact.name}</strong>
+              {contact.category_name && (
                 <small>{contact.category_name}</small>
-                )}
-              </div>
-              <span>{contact.email}</span>
-              <span>{contact.phone}</span>
+              )}
             </div>
+            <span>{contact.email}</span>
+            <span>{contact.phone}</span>
+          </div>
 
-            <div className="actions">
-              <Link to={`/edit/${contact.id}`}>
-                <img src={edit} alt="" />
-              </Link>
-              <button type="button">
-                <img src={trash} alt="" />
-              </button>
-            </div>
-          </Card>
-        ))}
-      </ListContainer>
+          <div className="actions">
+            <Link to={`/edit/${contact.id}`}>
+              <img src={edit} alt="" />
+            </Link>
+            <button type="button">
+              <img src={trash} alt="" />
+            </button>
+          </div>
+        </Card>
+      ))}
     </Container>
   );
 }
